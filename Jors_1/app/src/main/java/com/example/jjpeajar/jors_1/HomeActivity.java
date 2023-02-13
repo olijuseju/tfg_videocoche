@@ -487,6 +487,7 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
         savedInstanceState.putBoolean("isCambioPantalla", true);
         savedInstanceState.putInt("dir", dir);
 
+        // Llama al método padre para que guarde el estado de la interfaz
         super.onSaveInstanceState(savedInstanceState);
     }
 

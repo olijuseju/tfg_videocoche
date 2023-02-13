@@ -12,7 +12,7 @@
  *    -Ac(Aceleración) : Cambio de aleleración
  *    
  * TO DO:
- * APP -> PEDIR AL USUARIO QUE CONNECTE EL BLUETOOTH
+ * APP -> 
  * ARDUINO -> 
  */
 

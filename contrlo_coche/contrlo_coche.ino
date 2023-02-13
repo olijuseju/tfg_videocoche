@@ -12,7 +12,7 @@
  *    -Ac(Aceleración) : Cambio de aleleración
  *    
  * TO DO:
- * APP -> 
+ * APP -> CONTROL CON JOYSTICK
  * ARDUINO -> 
  */
 

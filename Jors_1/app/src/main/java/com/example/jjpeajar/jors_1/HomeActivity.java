@@ -86,6 +86,7 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private final static int REQUEST_ENABLE_BT = 1;
     private boolean onKeyup;
+    private int tiempoEsperaMando = 1000;
 
 
     @Override
@@ -226,6 +227,23 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                     btSt.setText("OFF");
                 }
 
+                if (connection){
+                    if (!stop) {
+                        if (dir==1){
+                            btForward.setImageResource(R.drawable.down_squared96);
+                        }
+                        if (dir==2){
+                            btRight.setImageResource(R.drawable.down_squared96);
+                        }
+                        if(dir==3){
+                            btLeft.setImageResource(R.drawable.down_squared96);
+                        }
+                        if (dir==-1){
+                            btBackward.setImageResource(R.drawable.down_squared96);
+                        }
+                    }
+                }
+
 
             }
         }
@@ -239,6 +257,14 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                     vel=auxvel;
                     btStL.setText("STOP");
                 }
+                if (connection){
+                    if (!stop) {
+                        btRight.setImageResource(R.drawable.down);
+                        btLeft.setImageResource(R.drawable.down);
+                        btBackward.setImageResource(R.drawable.down);
+                        btForward.setImageResource(R.drawable.down_squared96);
+                    }
+                }
                 dir=1;
                 MandarMensajeBt("Ve" + vel + ":", dir);
             }
@@ -249,6 +275,14 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                     isStopLento=false;
                     vel=auxvel;
                     btStL.setText("STOP");
+                }
+                if (connection){
+                    if (!stop) {
+                        btRight.setImageResource(R.drawable.down);
+                        btLeft.setImageResource(R.drawable.down);
+                        btBackward.setImageResource(R.drawable.down_squared96);
+                        btForward.setImageResource(R.drawable.down);
+                    }
                 }
                 dir=-1;
                 MandarMensajeBt("Ve" + vel + ":", dir);
@@ -261,6 +295,14 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                     isStopLento=false;
                     vel=auxvel;
                     btStL.setText("STOP");
+                }
+                if (connection){
+                    if (!stop) {
+                        btRight.setImageResource(R.drawable.down);
+                        btLeft.setImageResource(R.drawable.down_squared96);
+                        btBackward.setImageResource(R.drawable.down);
+                        btForward.setImageResource(R.drawable.down);
+                    }
                 }
                 dir=3;
                 MandarMensajeBt("Ve" + vel + ":", dir);
@@ -276,6 +318,14 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                     btStL.setText("STOP");
                 }
                 dir=2;
+                if (connection){
+                    if (!stop) {
+                        btRight.setImageResource(R.drawable.down_squared96);
+                        btLeft.setImageResource(R.drawable.down);
+                        btBackward.setImageResource(R.drawable.down);
+                        btForward.setImageResource(R.drawable.down);
+                    }
+                }
                 MandarMensajeBt("Ve" + vel + ":", dir);
             }
         });
@@ -333,6 +383,10 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                             btSt.setText("ON");
                             connection=false;
                             btConn.setText("Connect");
+                            btRight.setImageResource(R.drawable.down);
+                            btLeft.setImageResource(R.drawable.down);
+                            btBackward.setImageResource(R.drawable.down);
+                            btForward.setImageResource(R.drawable.down);
 
 
                         } catch (IOException e) {
@@ -368,6 +422,12 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                         toast1.show();
                     }else{
                         btSt.setText("ON");
+                        if (connection){
+                            btRight.setImageResource(R.drawable.down);
+                            btLeft.setImageResource(R.drawable.down);
+                            btBackward.setImageResource(R.drawable.down);
+                            btForward.setImageResource(R.drawable.down);
+                        }
                         stop = true;
                         MandarMensajeBt("St", 1);
                         Toast toast1 =
@@ -401,6 +461,12 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                         btStL.setText("START");
                         vel=0;
                         Log.d("keys", "Stop lento");
+                        if (connection){
+                            btRight.setImageResource(R.drawable.down);
+                            btLeft.setImageResource(R.drawable.down);
+                            btBackward.setImageResource(R.drawable.down);
+                            btForward.setImageResource(R.drawable.down);
+                        }
                         MandarMensajeBt("Ve" + String.valueOf(vel) + ":", dir);
                         isStopLento=true;
                     }
@@ -610,7 +676,7 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (esperarFin) {
                 esperarFin=false;
-                esperarYMensaje(1500);
+                esperarYMensaje(tiempoEsperaMando);
                 switch (keyCode) {
                     case 90:
                         dir = 1;
@@ -679,7 +745,7 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
         dir=0;
         if(esperarFin){
             Log.d("keys", "StopjOY");
-            esperarYMensaje(1500);
+            esperarYMensaje(tiempoEsperaMando);
             MandarMensajeBt("Ve" + String.valueOf(0.0) + ":", dir);
         }else{
             onkeydown=true;

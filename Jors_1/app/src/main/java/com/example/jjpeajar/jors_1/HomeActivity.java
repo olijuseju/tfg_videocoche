@@ -15,6 +15,7 @@ import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -68,7 +69,8 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
     private float velTx;
     private float acTx;
     private boolean stop;
-    private boolean accionrealizada;
+    private boolean esperarFin;
+    private boolean onkeydown;
     private int dir;
     BLReceiver receiver;
     Context context;
@@ -135,7 +137,8 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
         acTx=ac*100;
         velTx=vel*10;
         stop=true;
-        accionrealizada=false;
+        esperarFin=true;
+        onkeydown=false;
         onKeyup=false;
 
 
@@ -543,8 +546,6 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                     if (onKeyup){
                         MandarMensajeBt("Ve0.0:", 0);
                     }
-                }else{
-                    accionrealizada=false;
                 }
 
             } catch (IOException e) {
@@ -582,8 +583,6 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                     if (onKeyup){
                         MandarMensajeBt("Ve0.0:", 0);
                     }
-                }else{
-                    accionrealizada=false;
                 }
             } catch (IOException e) {
                 connection = false;
@@ -609,11 +608,9 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(!accionrealizada) {
-            onKeyup=false;
-            Log.d("keys", "activado");
-            accionrealizada=true;
-            if (dir == 0) {
+        if (esperarFin) {
+                esperarFin=false;
+                esperarYMensaje(1500);
                 switch (keyCode) {
                     case 90:
                         dir = 1;
@@ -676,22 +673,34 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
             }else{
                 return false;
             }
-        }else{
-            return false;
-        }
-
     }
 
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         dir=0;
-        if(!onKeyup){
+        if(esperarFin){
             Log.d("keys", "StopjOY");
+            esperarYMensaje(1500);
             MandarMensajeBt("Ve" + String.valueOf(0.0) + ":", dir);
+        }else{
+            onkeydown=true;
         }
-        onKeyup=true;
         return true;
 
 
+    }
+
+    public void esperarYMensaje(int milisegundos) {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                // acciones que se ejecutan tras los milisegundos
+                esperarFin=true;
+                if (onkeydown){
+                    MandarMensajeBt("Ve" + String.valueOf(0.0) + ":", dir);
+                    onkeydown=false;
+                }
+            }
+        }, milisegundos);
     }
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {

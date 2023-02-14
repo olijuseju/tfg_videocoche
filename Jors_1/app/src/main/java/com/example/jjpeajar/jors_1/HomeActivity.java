@@ -179,8 +179,8 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
 
         System.out.println(btAdapter.getBondedDevices());
 
-        //BluetoothDevice hc05 = btAdapter.getRemoteDevice("40:91:51:1D:E0:7E");
-        BluetoothDevice hc05 = btAdapter.getRemoteDevice("24:D7:EB:7D:DF:F2");
+        BluetoothDevice hc05 = btAdapter.getRemoteDevice("40:91:51:1D:E0:7E");
+        //BluetoothDevice hc05 = btAdapter.getRemoteDevice("24:D7:EB:7D:DF:F2");
         try {
             if (hc05.getName().equals("Videocoche")) {
                 btConn.setVisibility(View.VISIBLE);

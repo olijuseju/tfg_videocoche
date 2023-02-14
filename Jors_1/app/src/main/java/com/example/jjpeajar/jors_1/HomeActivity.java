@@ -15,6 +15,7 @@ import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -68,7 +69,8 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
     private float velTx;
     private float acTx;
     private boolean stop;
-    private boolean accionrealizada;
+    private boolean esperarFin;
+    private boolean onkeydown;
     private int dir;
     BLReceiver receiver;
     Context context;
@@ -83,6 +85,7 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
     private static final UUID MY_UUID_INSECURE =
             UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private final static int REQUEST_ENABLE_BT = 1;
+    private boolean onKeyup;
 
 
     @Override
@@ -134,7 +137,10 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
         acTx=ac*100;
         velTx=vel*10;
         stop=true;
-        accionrealizada=false;
+        esperarFin=true;
+        onkeydown=false;
+        onKeyup=false;
+
 
         seekBarVel.setProgress((int)velTx);
         seekBarAc.setProgress((int)acTx);
@@ -173,7 +179,8 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
 
         System.out.println(btAdapter.getBondedDevices());
 
-        BluetoothDevice hc05 = btAdapter.getRemoteDevice("40:91:51:1D:E0:7E");
+        //BluetoothDevice hc05 = btAdapter.getRemoteDevice("40:91:51:1D:E0:7E");
+        BluetoothDevice hc05 = btAdapter.getRemoteDevice("24:D7:EB:7D:DF:F2");
         try {
             if (hc05.getName().equals("Videocoche")) {
                 btConn.setVisibility(View.VISIBLE);
@@ -198,6 +205,7 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                     btSocket = hc05.createRfcommSocketToServiceRecord(MY_UUID_INSECURE);
                     System.out.println(btSocket);
                     btSocket.connect();
+                    btConn.setText("Disconnect");
 
 
                 } catch (IOException e) {
@@ -531,8 +539,15 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
         if(connection){
 
             try {
+                Log.d("keys", msg);
                 OutputStream outputStream = btSocket.getOutputStream();
                 outputStream.write(msg.getBytes(StandardCharsets.UTF_8));
+                if (valor!=0f){
+                    if (onKeyup){
+                        MandarMensajeBt("Ve0.0:", 0);
+                    }
+                }
+
             } catch (IOException e) {
                 connection = false;
                 stop = true;
@@ -564,6 +579,11 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                 Log.d("keys", msg);
                 OutputStream outputStream = btSocket.getOutputStream();
                 outputStream.write(msg.getBytes(StandardCharsets.UTF_8));
+                if (valor!=0){
+                    if (onKeyup){
+                        MandarMensajeBt("Ve0.0:", 0);
+                    }
+                }
             } catch (IOException e) {
                 connection = false;
                 stop = true;
@@ -588,85 +608,99 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(!accionrealizada) {
-            accionrealizada=true;
-            switch (keyCode) {
-                case 90:
-                    if (dir != 1) {
+        if (esperarFin) {
+                esperarFin=false;
+                esperarYMensaje(1500);
+                switch (keyCode) {
+                    case 90:
                         dir = 1;
                         Log.d("keys", "alante");
                         MandarMensajeBt("Ve" + String.valueOf(vel) + ":", dir);
                         return true;
-                    }
 
-                case 87:
-                    if (dir != 2) {
-                        dir = 2;
-                        Log.d("keys", "derecha");
-                        MandarMensajeBt("Ve" + String.valueOf(vel) + ":", dir);
-                        return true;
-                    }
-                case 88:
-                    if (dir != 3) {
-                        dir = 3;
-                        Log.d("keys", "izquierda");
-                        MandarMensajeBt("Ve" + String.valueOf(vel) + ":", dir);
-                        return true;
-                    }
-                case 89:
-                    if (dir != -1) {
-                        dir = -1;
-                        Log.d("keys", "atrás");
-                        MandarMensajeBt("Ve" + String.valueOf(vel) + ":", dir);
-                        return true;
-                    }
+                    case 87:
+                       dir = 2;
+                       Log.d("keys", "derecha");
+                       MandarMensajeBt("Ve" + String.valueOf(vel) + ":", dir);
+                       return true;
 
-                case 85:
-                    Log.d("keys", "Stop");
+                    case 88:
+                       dir = 3;
+                       Log.d("keys", "izquierda");
+                       MandarMensajeBt("Ve" + String.valueOf(vel) + ":", dir);
+                       return true;
 
-                    if (stop) {
-                        btSt.setText("OFF");
-                        stop = false;
-                        MandarMensajeBt("St", 0);
-                    } else {
-                        btSt.setText("ON");
-                        stop = true;
-                        MandarMensajeBt("St", 1);
-                    }
-                    return true;
-                case 24:
-                    if (isStopLento) {
-                        btStL.setText("STOP");
-                        vel = auxvel;
-                        Log.d("keys", "Stop lento start");
-                        MandarMensajeBt("Ve" + String.valueOf(vel) + ":", dir);
-                        isStopLento = false;
+                    case 89:
+                       dir = -1;
+                       Log.d("keys", "atrás");
+                       MandarMensajeBt("Ve" + String.valueOf(vel) + ":", dir);
+                       return true;
+
+                    case 85:
+                        Log.d("keys", "Stop");
+
+                        if (stop) {
+                            btSt.setText("OFF");
+                            stop = false;
+                            MandarMensajeBt("St", 0);
+                        } else {
+                            btSt.setText("ON");
+                            stop = true;
+                            MandarMensajeBt("St", 1);
+                        }
                         return true;
-                    } else {
-                        btStL.setText("START");
-                        vel = 0;
-                        Log.d("keys", "Stop lento");
-                        MandarMensajeBt("Ve" + String.valueOf(vel) + ":", dir);
-                        isStopLento = true;
-                        return true;
-                    }
+                    case 24:
+                        if (isStopLento) {
+                            btStL.setText("STOP");
+                            vel = auxvel;
+                            Log.d("keys", "Stop lento start");
+                            MandarMensajeBt("Ve" + String.valueOf(vel) + ":", dir);
+                            isStopLento = false;
+                            return true;
+                        } else {
+                            btStL.setText("START");
+                            vel = 0;
+                            Log.d("keys", "Stop lento");
+                            MandarMensajeBt("Ve" + String.valueOf(vel) + ":", dir);
+                            isStopLento = true;
+                            return true;
+                        }
 
-                default:
-                    return super.onKeyUp(keyCode, event);
+                    default:
+                        return super.onKeyUp(keyCode, event);
 
+                }
+            }else{
+                return false;
             }
-
-        }else{
-            return false;
-        }
-
     }
 
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         dir=0;
-        MandarMensajeBt("Ve" + String.valueOf(vel) + ":", dir);
-        accionrealizada=false;
+        if(esperarFin){
+            Log.d("keys", "StopjOY");
+            esperarYMensaje(1500);
+            MandarMensajeBt("Ve" + String.valueOf(0.0) + ":", dir);
+        }else{
+            onkeydown=true;
+        }
         return true;
+
+
+    }
+
+    public void esperarYMensaje(int milisegundos) {
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                // acciones que se ejecutan tras los milisegundos
+                esperarFin=true;
+                if (onkeydown){
+                    MandarMensajeBt("Ve" + String.valueOf(0.0) + ":", dir);
+                    onkeydown=false;
+                }
+            }
+        }, milisegundos);
     }
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {

@@ -147,7 +147,8 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:clickable="true"
-            android:src="@drawable/up"
+            android:rotation="180"
+            android:src="@drawable/down"
             app:layout_constraintEnd_toEndOf="@+id/btForward"
             app:layout_constraintStart_toStartOf="@+id/btForward"
             app:layout_constraintTop_toBottomOf="@+id/btLeft" />

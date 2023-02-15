@@ -1,19 +1,20 @@
 
 
 
-/*Proyecto de control de coche 
+/*Proyecto de control de Videocoche 
  * 
  * Autor: Jose Julio Peñaranda
  * 
  * Ordenes de bluetooth: 
  *    -St1 :Parada
  *    -St0 :Encendido
- *    -Ve(Velocidad):(Desviación de -1 a 3) :Cambio de referencia -> 2=DERECHA 3=IZQUIERDA
+ *    -Ve(Velocidad):(Desviación de -1 a 3) :Cambio de referencia -> 1=DELANTE 2=DERECHA 3=IZQUIERDA -1=ATRÁS
  *    -Ac(Aceleración) : Cambio de aleleración
  *    
  * TO DO:
- * APP -> CONTROL CON JOYSTICK
- * ARDUINO -> 
+ * APP ->
+ * ARDUINO ->
+ * HARDWARE ->
  */
 
 #include <Arduino.h>
@@ -401,7 +402,11 @@ void loop2(void *parameter){
        Serial.print(Bton); Serial.println(" // Ordenreducida:" );
        //Serial.println(Btin); 
        if (Ord == "St"){
-    
+         if(Bton == "-1"){
+          Cm_ref=0.03;
+          Serial.print(Cm_ref); Serial.println(" // Aceleracion:" );
+          Bton == "1";
+         }
          if(Bton == "0")
            Stop=0;
          else

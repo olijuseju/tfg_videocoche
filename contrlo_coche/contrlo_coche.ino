@@ -12,8 +12,9 @@
  *    -Ac(Aceleración) : Cambio de aleleración
  *    
  * TO DO:
- * APP -> 
- * ARDUINO -> MARCHA ATRAS
+ * APP ->
+ * ARDUINO ->
+ * HARDWARE ->
  */
 
 #include <Arduino.h>
@@ -401,7 +402,11 @@ void loop2(void *parameter){
        Serial.print(Bton); Serial.println(" // Ordenreducida:" );
        //Serial.println(Btin); 
        if (Ord == "St"){
-    
+         if(Bton == "-1"){
+          Cm_ref=0.03;
+          Serial.print(Cm_ref); Serial.println(" // Aceleracion:" );
+          Bton == "1";
+         }
          if(Bton == "0")
            Stop=0;
          else

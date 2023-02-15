@@ -358,7 +358,6 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                             toast1.show();
                             btConn.setText("Disconnect");
 
-
                         } catch (IOException e) {
                             Toast toast1 =
                                     Toast.makeText(getApplicationContext(),
@@ -370,6 +369,10 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                         connection=btSocket.isConnected();
                     }else{
                         try {
+                            ac=0.03f;
+                            acTx=ac*100;
+                            seekBarAc.setProgress((int)acTx);
+                            MandarMensajeBt("St", -1);
                             btSocket.close();
                             Toast toast1 =
                                     Toast.makeText(getApplicationContext(),
@@ -656,13 +659,24 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
         if(connection){
             try {
                 Log.d("keys", msg);
-                OutputStream outputStream = btSocket.getOutputStream();
-                outputStream.write(msg.getBytes(StandardCharsets.UTF_8));
-                if (valor!=0){
-                    if (onKeyup){
-                        MandarMensajeBt("Ve0.0:", 0);
+
+                if(prefijo.equals("St")){
+                    OutputStream outputStream = btSocket.getOutputStream();
+                    outputStream.write(msg.getBytes(StandardCharsets.UTF_8));
+
+                }else if (prefijo.equals("Ac")){
+                    OutputStream outputStream = btSocket.getOutputStream();
+                    outputStream.write(msg.getBytes(StandardCharsets.UTF_8));
+                }else{
+                    OutputStream outputStream = btSocket.getOutputStream();
+                    outputStream.write(msg.getBytes(StandardCharsets.UTF_8));
+                    if (valor!=0){
+                        if (onKeyup){
+                            MandarMensajeBt("Ve0.0:", 0);
+                        }
                     }
                 }
+
             } catch (IOException e) {
                 connection = false;
                 stop = true;
@@ -793,8 +807,8 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            int state = intent.getIntExtra("STATE", -1);
             if (connection) {
-                int state = intent.getIntExtra("STATE", -1);
                 Log.d("receivor", String.valueOf(state));
                 connection = false;
                 stop = true;
@@ -803,6 +817,10 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                 btStL.setText("STOP");
                 btSt.setText("ON");
                 btConn.setText("Connect");
+                btRight.setImageResource(R.drawable.down);
+                btLeft.setImageResource(R.drawable.down);
+                btBackward.setImageResource(R.drawable.down);
+                btForward.setImageResource(R.drawable.down);
                 switch (state) {
                     case 13:
                         Toast toast1 =
@@ -818,10 +836,15 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                                         "CONEXION PERDIDA", Toast.LENGTH_SHORT);
 
                         toast2.show();
-
+                        ac=0.03f;
+                        acTx=ac*100;
+                        seekBarAc.setProgress((int)acTx);
+                        txNAc.setText(String.valueOf(ac));
 
                 }
             }
+
+
         }
     };
 

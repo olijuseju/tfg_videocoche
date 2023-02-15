@@ -289,8 +289,21 @@ float Actualizamot(float ref, float vel, float Ik_1,int chdir, int chfor, int nu
 
    
   }
+//-------------------------------------------Callback para detectar la desconexion----------------------
+
+
+  void disconnectionCallback(esp_spp_cb_event_t event, esp_spp_cb_param_t *param){
+  if(event == ESP_SPP_CLOSE_EVT ){
+    Serial.println("Client disconnected");
+    Cm_ref=0.03;
+    Serial.print(Cm_ref); Serial.println(" // Aceleracion:" );
+    Stop = 1;
+  }
+}
   
 //-------------------------------------------Inicializacion del dispositivo----------------------
+
+
 void setup() {
 
   xTaskCreatePinnedToCore(
@@ -304,6 +317,7 @@ void setup() {
  
   Serial.begin(115200);
   SerialBT.begin("Videocoche"); //Bluetooth device name
+  SerialBT.register_callback(disconnectionCallback);
 
   //Definicion encoder
   pinMode(M1_encoder_A, INPUT_PULLUP);
@@ -381,7 +395,7 @@ void setup() {
  */
 void loop2(void *parameter){
   for(;;){
-    if (SerialBT.available()) {    
+    if (SerialBT.available()) {
      Btin=SerialBT.readString();
      if(Btin == "Status"){
        SerialBT.print("St:"+String(abs(Stop-1))+":"+String(Cm_ref));
@@ -433,6 +447,9 @@ void loop2(void *parameter){
   }
   vTaskDelay(10);
 }
+
+
+
 //--------------------------------------------------------Bucle de control-----------------------------------------------
 void loop() {
 

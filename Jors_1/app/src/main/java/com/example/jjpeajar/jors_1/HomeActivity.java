@@ -457,16 +457,29 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
                         Log.d("keys", "Stop lento start");
                         MandarMensajeBt("Ve" + String.valueOf(vel) + ":", dir);
                         isStopLento=false;
+                        if(!stop){
+                            if (dir==1){
+                                btForward.setImageResource(R.drawable.down_squared96);
+                            }
+                            if (dir==2){
+                                btRight.setImageResource(R.drawable.down_squared96);
+                            }
+                            if(dir==3){
+                                btLeft.setImageResource(R.drawable.down_squared96);
+                            }
+                            if (dir==-1){
+                                btBackward.setImageResource(R.drawable.down_squared96);
+                            }
+                        }
+
                     }else{
                         btStL.setText("START");
                         vel=0;
                         Log.d("keys", "Stop lento");
-                        if (connection){
-                            btRight.setImageResource(R.drawable.down);
-                            btLeft.setImageResource(R.drawable.down);
-                            btBackward.setImageResource(R.drawable.down);
-                            btForward.setImageResource(R.drawable.down);
-                        }
+                        btRight.setImageResource(R.drawable.down);
+                        btLeft.setImageResource(R.drawable.down);
+                        btBackward.setImageResource(R.drawable.down);
+                        btForward.setImageResource(R.drawable.down);
                         MandarMensajeBt("Ve" + String.valueOf(vel) + ":", dir);
                         isStopLento=true;
                     }
@@ -674,6 +687,10 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        btRight.setImageResource(R.drawable.down);
+        btLeft.setImageResource(R.drawable.down);
+        btBackward.setImageResource(R.drawable.down);
+        btForward.setImageResource(R.drawable.down);
         if (esperarFin) {
                 esperarFin=false;
                 esperarYMensaje(tiempoEsperaMando);
@@ -742,6 +759,10 @@ public class HomeActivity extends AppCompatActivity implements ConnectionLostCal
     }
 
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        btRight.setImageResource(R.drawable.down);
+        btLeft.setImageResource(R.drawable.down);
+        btBackward.setImageResource(R.drawable.down);
+        btForward.setImageResource(R.drawable.down);
         dir=0;
         if(esperarFin){
             Log.d("keys", "StopjOY");

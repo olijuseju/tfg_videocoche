@@ -1,19 +1,19 @@
 
 
 
-/*Proyecto de control de coche 
+/*Proyecto de control de Videocoche 
  * 
  * Autor: Jose Julio Peñaranda
  * 
  * Ordenes de bluetooth: 
  *    -St1 :Parada
  *    -St0 :Encendido
- *    -Ve(Velocidad):(Desviación de -1 a 3) :Cambio de referencia -> 2=DERECHA 3=IZQUIERDA
+ *    -Ve(Velocidad):(Desviación de -1 a 3) :Cambio de referencia -> 1=DELANTE 2=DERECHA 3=IZQUIERDA -1=ATRÁS
  *    -Ac(Aceleración) : Cambio de aleleración
  *    
  * TO DO:
- * APP -> CONTROL CON JOYSTICK
- * ARDUINO -> 
+ * APP -> 
+ * ARDUINO -> MARCHA ATRAS
  */
 
 #include <Arduino.h>
